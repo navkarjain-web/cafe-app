@@ -64,3 +64,43 @@ async function startServer() {
 }
 
 startServer().catch(console.error);
+import { db } from "./db"; // ya correct path
+import { sql } from "drizzle-orm";
+
+(async () => {
+  try {
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS menuItems (
+        id SERIAL PRIMARY KEY,
+        name TEXT,
+        description TEXT,
+        category TEXT,
+        price TEXT,
+        imageUrl TEXT,
+        isAvailable BOOLEAN DEFAULT true,
+        createdAt TIMESTAMP DEFAULT NOW(),
+        updatedAt TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS reservations (
+        id SERIAL PRIMARY KEY,
+        customerName TEXT,
+        customerEmail TEXT,
+        customerPhone TEXT,
+        partySize INT,
+        reservationDate TIMESTAMP,
+        reservationTime TEXT,
+        specialRequests TEXT,
+        status TEXT,
+        createdAt TIMESTAMP DEFAULT NOW(),
+        updatedAt TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    console.log("✅ Tables created");
+  } catch (e) {
+    console.error("❌ DB error:", e);
+  }
+})();
